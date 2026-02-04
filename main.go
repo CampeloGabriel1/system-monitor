@@ -7,7 +7,17 @@ import (
 	"strconv"
 )
 
+type MemoryStats struct {
+	MemTotal     int
+	MemAvailable int
+	MemUsed 	int
+}
 	
+func (m MemoryStats) UsagePercentage() float64 {
+	if m.MemTotal == 0 { return 0 }
+    return float64(m.MemUsed) / float64(m.MemTotal) * 100
+}
+
 func main () {
 	
 	content, err := os.ReadFile("/proc/meminfo")
@@ -41,6 +51,14 @@ func main () {
 			}
 		}
 	}
+
+	stats := MemoryStats{
+        MemTotal:     memTotal,
+        MemAvailable: memAvailable,
+        MemUsed:      memTotal - memAvailable,
+	}
 	fmt.Printf("MemTotal (kB): %d\nMemAvailable (kB): %d\n", memTotal, memAvailable)
+	fmt.Printf("Memória Usada (kB): %d\n", memTotal - memAvailable)
+	fmt.Printf("Porcentagem de memória usada: %.2f%%\n", stats.UsagePercentage())
 
 }
