@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"strconv"
 )
 
 	
@@ -16,16 +17,30 @@ func main () {
 	}
 	texto := string(content)
 	linhas := strings.Split(texto, "\n")
-	var resultado []string
+
+	var memTotal, memAvailable int
 	for _, linha := range linhas {
 		if strings.HasPrefix(linha, "MemTotal:") {
-			resultado = append(resultado, linha)
+
+			fields := strings.Fields(linha)
+			if len(fields) > 1 {
+				if v, err := strconv.Atoi(fields[1]); err == nil {
+					memTotal = v
+				} else {
+					fmt.Fprintf(os.Stderr, "Erro ao converter valor de MemTotal: %v\n", err)
+				}
+			}
 		} else if strings.HasPrefix(linha, "MemAvailable:") {
-			resultado = append(resultado, linha)
+			fields := strings.Fields(linha)
+			if len(fields) > 1 {
+				if v, err := strconv.Atoi(fields[1]); err == nil {
+					memAvailable = v
+				} else {
+					fmt.Fprintf(os.Stderr, "Erro ao converter valor de MemTotal: %v\n", err)
+				}
+			}
 		}
 	}
-	for _, linha := range resultado {
-		fmt.Println(linha)
-	}
+	fmt.Printf("MemTotal (kB): %d\nMemAvailable (kB): %d\n", memTotal, memAvailable)
 
 }
