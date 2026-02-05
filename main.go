@@ -26,32 +26,48 @@ func getCor(uso float64) string {
 
 func main() {
 	for {
-	fmt.Print(Clear)
+		fmt.Print(Clear)
 
 		fmt.Println(Cyan + "=== GO SYSTEM MONITOR (Pressione Ctrl+C para sair) ===" + Reset)
 		fmt.Println(time.Now().Format("15:04:05"))
 		fmt.Println("--------------------------------------------------")
 
-	// 1. Memória
-	mStats, err := GetMemoryStats()
-	if err != nil {
-		fmt.Printf("Erro memória: %v\n", err)
-	} else {
-		usoMem := mStats.UsagePercentage()
-        corMem := getCor(usoMem) // Aplicando a cor na RAM também!
-        fmt.Printf("RAM: %s%.2f%%%s de %d kB usados\n", corMem, usoMem, Reset, mStats.Total)
-	}
+		// 1. Memória
+		mStats, err := GetMemoryStats()
+		if err != nil {
+			fmt.Printf("Erro memória: %v\n", err)
+		} else {
+			usoMem := mStats.UsagePercentage()
+			corMem := getCor(usoMem)
+			fmt.Printf("RAM: %s%.2f%%%s de %d kB usados\n", corMem, usoMem, Reset, mStats.Total)
+		}
 
-	// 2. CPU 
-	statsA, _ := GetCPUStats()
-	time.Sleep(1 * time.Second)
-	statsB, _ := GetCPUStats()
+		// 2. CPU
+		statsA, err := GetCPUStats()
+		if err != nil {
+			fmt.Printf("Erro CPU (1ª leitura): %v\n", err)
+			continue
+		}
 
-	idleDelta := float64(statsB.Idle - statsA.Idle)
-	totalDelta := float64(statsB.Total - statsA.Total)
-	cpuUsage := (1.0 - idleDelta/totalDelta) * 100
+		time.Sleep(1 * time.Second)
 
-	corCPU := getCor(cpuUsage)
-	fmt.Printf("CPU: %s%.2f%%%s\n", corCPU, cpuUsage, Reset)
+		statsB, err := GetCPUStats()
+		if err != nil {
+			fmt.Printf("Erro CPU (2ª leitura): %v\n", err)
+			continue
+		}
+
+		idleDelta := float64(statsB.Idle - statsA.Idle)
+		totalDelta := float64(statsB.Total - statsA.Total)
+
+		if totalDelta == 0 {
+			fmt.Println("Erro: Delta total de CPU é zero")
+			continue
+		}
+
+		cpuUsage := (1.0 - idleDelta/totalDelta) * 100
+
+		corCPU := getCor(cpuUsage)
+		fmt.Printf("CPU: %s%.2f%%%s\n", corCPU, cpuUsage, Reset)
 	}
 }

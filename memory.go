@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"strings"
 	"strconv"
@@ -25,18 +26,37 @@ func GetMemoryStats() (MemoryStats, error) {
 
 	lines := strings.Split(string(content), "\n")
 	var m MemoryStats
+	foundTotal := false
+	foundAvailable := false
 
 	for _, line := range lines {
 		fields := strings.Fields(line)
-		if len(fields) < 2 { continue }
+		if len(fields) < 2 {
+			continue
+		}
 
-		val, _ := strconv.Atoi(fields[1])
+		val, errParse := strconv.Atoi(fields[1])
+		if errParse != nil {
+			return MemoryStats{}, fmt.Errorf("erro ao fazer parse de meminfo: %v", errParse)
+		}
+
 		if strings.HasPrefix(line, "MemTotal:") {
 			m.Total = val
+			foundTotal = true
 		} else if strings.HasPrefix(line, "MemAvailable:") {
 			m.Available = val
+			foundAvailable = true
 		}
 	}
+
+	if !foundTotal {
+		return MemoryStats{}, fmt.Errorf("MemTotal não encontrado em /proc/meminfo")
+	}
+
+	if !foundAvailable {
+		return MemoryStats{}, fmt.Errorf("MemAvailable não encontrado em /proc/meminfo")
+	}
+
 	m.Used = m.Total - m.Available
 	return m, nil
 }
