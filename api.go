@@ -40,6 +40,32 @@ type resultCPU struct {
 	err   error
 }
 
+func HomeHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	response := map[string]interface{}{
+		"project":     "Sentinel Core - System Monitor",
+		"status":      "running",
+		"description": "API para monitoramento de recursos Linux em tempo real e histórico.",
+		"endpoints": []string{
+			"GET /health   - Verifica saúde do sistema",
+			"GET /stats    - Métricas atuais de CPU e Memória (salva no banco)",
+			"GET /memory   - Somente métricas de memória",
+			"GET /cpu      - Somente métricas de CPU",
+			"GET /history  - Histórico das últimas 20 métricas salvas",
+		},
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		log.Printf("home: erro ao escrever resposta JSON: %v", err)
+	}
+}
+
 func HistoryHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)

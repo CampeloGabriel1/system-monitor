@@ -10,7 +10,7 @@ import (
 func main() {
 	
 	InitDB()
-
+	http.HandleFunc("/", HomeHandler)
 	http.HandleFunc("/health", HealthHandler)
 	http.HandleFunc("/history", HistoryHandler)
 	http.HandleFunc("/stats", StatsHandler)
@@ -28,6 +28,7 @@ func main() {
 	fmt.Printf("Servidor de Monitor iniciado em http://localhost%s\n", port)
 	fmt.Println("Endpoints disponíveis:")
 	fmt.Println("  GET /health  - Verifica saúde do servidor")
+	fmt.Println("  GET /history - Histórico de métricas salvas")
 	fmt.Println("  GET /stats   - Stats de CPU e Memória")
 	fmt.Println("  GET /memory  - Stats de Memória")
 	fmt.Println("  GET /cpu     - Stats de CPU")
