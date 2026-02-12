@@ -1,0 +1,30 @@
+
+services:
+  # O seu Monitor Go
+  monitor-api:
+    build: .
+    container_name: monitor_app
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - DB_URL=postgres://user:password@db:5432/monitor_db
+    depends_on:
+      - db
+
+  # PostgreSQL
+  db:
+    image: postgres:15-alpine
+    container_name: monitor_db
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=monitor_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+# Definindo o volume para os dados não sumirem
+volumes:
+  postgres_data:

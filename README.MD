@@ -16,10 +16,10 @@ Desenvolver uma ferramenta CLI (Command Line Interface) leve e eficiente para mo
 - **Git/GitHub:** Versionamento semântico e organização de repositório.
 
 ## Funcionalidades
-- [x] **Monitoramento de RAM:** Cálculo de memória total, disponível e percentual de uso.
-- [x] **Monitoramento de CPU:** Cálculo de carga de processamento via deltas de ticks do processador.
-- [x] **Interface Visual:** Alertas coloridos baseados no nível de utilização (Verde, Amarelo e Vermelho).
-- [x] **Real-time:** Atualização contínua a cada segundo.
+- **Monitoramento de RAM:** Cálculo de memória total, disponível e percentual de uso.
+- **Monitoramento de CPU:** Cálculo de carga de processamento via deltas de ticks do processador.
+- **Interface Visual:** Alertas coloridos baseados no nível de utilização (Verde, Amarelo e Vermelho).
+- **Real-time:** Atualização contínua a cada segundo.
 
 ## Como rodar o projeto
 
