@@ -40,6 +40,28 @@ type resultCPU struct {
 	err   error
 }
 
+func HistoryHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var metrics []MetricLog
+
+	result := DB.Order("timestamp desc").Limit(20).Find(&metrics)
+	if result.Error != nil {
+		log.Printf("Erro ao buscar histórico de métricas: %v", result.Error)
+		http.Error(w, "Erro ao processar o histórico de métricas", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(metrics); err != nil {
+		log.Printf("history: erro ao escrever resposta JSON: %v", err)
+	}
+}
+
 func StatsHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)

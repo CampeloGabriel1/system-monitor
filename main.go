@@ -12,6 +12,7 @@ func main() {
 	InitDB()
 
 	http.HandleFunc("/health", HealthHandler)
+	http.HandleFunc("/history", HistoryHandler)
 	http.HandleFunc("/stats", StatsHandler)
 	http.HandleFunc("/memory", MemoryHandler)
 	http.HandleFunc("/cpu", CPUHandler)
