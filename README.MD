@@ -20,5 +20,22 @@ Certifique-se de ter o **Docker** e o **Docker Compose** instalados em seu ambie
 
 1. **Clone o repositório:**
    ```bash
-   git clone [https://github.com/seu-usuario/sentinel-core.git](https://github.com/seu-usuario/sentinel-core.git)
+   git clone [https://https://github.com/CampeloGabriel1/system-monitor]
    cd sentinel-core
+
+2. **Infraestrutura**
+   O seguinte comando irá buildar a imagem em Go e subir o banco de dados PostgreSQL:
+   ```bash
+   docker compose up--build -d
+
+3. **Acesso a API**
+   Com o seguintes endpoints:
+
+   GET, /, Discovery endpoint com guia de uso da API.
+   GET, /health, Liveness probe para verificar saúde do sistema.
+   GET, /stats, Coleta CPU/RAM atual e persiste os dados no banco.
+   GET, /history, Retorna as últimas 20 métricas armazenadas no banco.
+   GET, /memory, Retorna exclusivamente métricas de memória.
+   GET, /cpu, Retorna exclusivamente métricas de CPU.   
+
+   Projeto desenvolvido para fins de portfólio, focando em sistemas distribuídos, observabilidade e conteinerização.
