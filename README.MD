@@ -1,29 +1,24 @@
-# Go System Monitor
+# Sentinel Core - System Monitor
 
-Um monitor de recursos do sistema em tempo real escrito em **Go**, projetado para rodar nativamente em ambientes **Linux**. Este projeto demonstra a integração entre a linguagem Go e o Kernel Linux através da leitura direta do sistema de arquivos `/proc`.
+O **Sentinel Core** é uma ferramenta de monitoramento de baixo nível para sistemas Linux. Ele extrai métricas de CPU e Memória diretamente do Kernel, processa os dados de forma concorrente utilizando Goroutines e os persiste em um banco de dados relacional para análise histórica.
 
-
-
-## Objetivo do Projeto
-Desenvolver uma ferramenta CLI (Command Line Interface) leve e eficiente para monitorar a saúde do sistema (CPU e RAM), aplicando boas práticas de arquitetura de software e conceitos de engenharia de sistemas.
-
-## Tecnologias e Conceitos Aplicados
-
-- **Linguagem Go:** Uso de Structs, Métodos, Tipagem Forte e Concorrência (Time/Sleep).
-- **Integração com Kernel Linux:** Parsing de arquivos do sistema `/proc/meminfo` e `/proc/stat`.
-- **Arquitetura Modular:** Separação de responsabilidades em múltiplos arquivos (`cpu.go`, `memory.go`, `main.go`).
-- **UX de Terminal:** Implementação de cores ANSI e interface dinâmica com loop de atualização em tempo real.
-- **Git/GitHub:** Versionamento semântico e organização de repositório.
+## Tecnologias
+* **Linguagem:** Go (Golang) 1.25.6
+* **Banco de Dados:** PostgreSQL 15
+* **ORM:** GORM
+* **Containerização:** Docker & Docker Compose
 
 ## Funcionalidades
-- **Monitoramento de RAM:** Cálculo de memória total, disponível e percentual de uso.
-- **Monitoramento de CPU:** Cálculo de carga de processamento via deltas de ticks do processador.
-- **Interface Visual:** Alertas coloridos baseados no nível de utilização (Verde, Amarelo e Vermelho).
-- **Real-time:** Atualização contínua a cada segundo.
+* **Extração de Dados:** Leitura direta dos arquivos `/proc/stat` e `/proc/meminfo` do Linux.
+* **Alta Performance:** Processamento paralelo de métricas com canais e goroutines para reduzir a latência da API.
+* **Persistência:** Registro automático de telemetria no banco de dados a cada requisição de status.
+* **Resiliência:** Lógica de *retry* integrada para garantir a conexão com o banco de dados durante a inicialização.
 
-## Como rodar o projeto
+## Como rodar com Docker
 
-1. Certifique-se de estar em um ambiente Linux (ou WSL).
-2. Clone o repositório:
+Certifique-se de ter o **Docker** e o **Docker Compose** instalados em seu ambiente Linux ou WSL2.
+
+1. **Clone o repositório:**
    ```bash
-   git clone [https://github.com/CampeloGabriel1/system-monitor](https://github.com/CampeloGabriel1/system-monitor)
+   git clone [https://github.com/seu-usuario/sentinel-core.git](https://github.com/seu-usuario/sentinel-core.git)
+   cd sentinel-core
