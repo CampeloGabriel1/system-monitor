@@ -1,0 +1,21 @@
+# Controle de Versão
+.git
+.gitignore
+
+# Binários e arquivos locais de Go
+bin/
+obj/
+*.exe
+*.test
+*.prof
+main
+monitor
+
+# Logs e arquivos temporários
+*.log
+tmp/
+
+# Docker files (não precisam estar dentro da imagem)
+Dockerfile
+docker-compose.yml
+.dockerignore
