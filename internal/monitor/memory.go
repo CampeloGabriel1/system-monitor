@@ -1,10 +1,10 @@
-package main
+package monitor
 
 import (
 	"fmt"
 	"os"
-	"strings"
 	"strconv"
+	"strings"
 )
 
 type MemoryStats struct {

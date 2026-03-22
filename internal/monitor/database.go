@@ -1,7 +1,6 @@
-package main
+package monitor
 
 import (
-
 	"log"
 	"os"
 	"time"

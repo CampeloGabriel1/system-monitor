@@ -1,10 +1,12 @@
-package main
+package api
 
 import (
 	"encoding/json"
 	"log"
 	"net/http"
 	"time"
+
+	"system-monitor/internal/monitor"
 )
 
 type StatsResponse struct {
@@ -32,11 +34,11 @@ type CPUStatsJSON struct {
 // resultMemory e resultCPU carregam o retorno das goroutines (dados + erro).
 // Usamos structs para enviar os dois valores pelo canal de uma vez.
 type resultMemory struct {
-	stats MemoryStats
+	stats monitor.MemoryStats
 	err   error
 }
 type resultCPU struct {
-	stats CPUStats
+	stats monitor.CPUStats
 	err   error
 }
 
@@ -72,9 +74,9 @@ func HistoryHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var metrics []MetricLog
+	var metrics []monitor.MetricLog
 
-	result := DB.Order("timestamp desc").Limit(20).Find(&metrics)
+	result := monitor.DB.Order("timestamp desc").Limit(20).Find(&metrics)
 	if result.Error != nil {
 		log.Printf("Erro ao buscar histórico de métricas: %v", result.Error)
 		http.Error(w, "Erro ao processar o histórico de métricas", http.StatusInternalServerError)
@@ -100,13 +102,13 @@ func StatsHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Goroutine 1: busca memória em paralelo.
 	go func() {
-		stats, err := GetMemoryStats()
+		stats, err := monitor.GetMemoryStats()
 		memCh <- resultMemory{stats, err}
 	}()
 
 	// Goroutine 2: busca CPU em paralelo.
 	go func() {
-		stats, err := GetCPUStats()
+		stats, err := monitor.GetCPUStats()
 		cpuCh <- resultCPU{stats, err}
 	}()
 
@@ -164,7 +166,7 @@ func MemoryHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	memstats, err := GetMemoryStats()
+	memstats, err := monitor.GetMemoryStats()
 	if err != nil {
 		http.Error(w, "Error getting memory stats", http.StatusInternalServerError)
 		return
@@ -197,7 +199,7 @@ func CPUHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cStats, err := GetCPUStats()
+	cStats, err := monitor.GetCPUStats()
 	if err != nil {
 		http.Error(w, "Error getting CPU stats", http.StatusInternalServerError)
 		return
@@ -248,16 +250,16 @@ func HealthHandler(w http.ResponseWriter, r *http.Request) {
 
 // SaveMetric salva uma métrica no banco de dados
 func SaveMetric(cpuUsage float64, memoryUsage float64, totalMemoryKb int) error {
-	metric := MetricLog{
+	metric := monitor.MetricLog{
 		Timestamp:     time.Now(),
 		CpuUsage:      cpuUsage,
 		MemoryUsage:   memoryUsage,
 		TotalMemoryKb: totalMemoryKb,
 	}
-	return DB.Create(&metric).Error
+	return monitor.DB.Create(&metric).Error
 }
 
-func calculateCPUUsage(stats CPUStats) float64 {
+func calculateCPUUsage(stats monitor.CPUStats) float64 {
 	if stats.Total == 0 {
 		return 0
 	}
