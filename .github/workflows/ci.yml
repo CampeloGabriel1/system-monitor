@@ -27,7 +27,7 @@ jobs:
         run: go test -v ./...
 
       - name: Build do Binário
-        run: go build -v -o system-monitor .
+        run: cd cmd/system-monitor && go build -v -o system-monitor .
 
       # Diferencial DevOps: Build da Imagem Docker para testar se o Dockerfile está OK
       - name: Build Docker Image
