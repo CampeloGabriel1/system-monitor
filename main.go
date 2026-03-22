@@ -1,10 +1,13 @@
 package main
+
 // teste
 import (
 	"fmt"
 	"log"
+	"log/slog"
 	"net/http"
 	"os"
+	"time"
 )
 
 func main() {
@@ -36,4 +39,25 @@ func main() {
 	if err := http.ListenAndServe(port, nil); err != nil {
 		log.Fatalf("Erro ao iniciar servidor: %v", err)
 	}
+
+	logger := SetupLogger()
+	slog.SetDefault(logger)
+
+	slog.Info("Iniciando serviço de monitoramento de alta escala")
+
+	for {
+		stats := GetStats()
+
+		if stats.Status == "WARNING" {
+			slog.Warn("Uso de memória acima do limite!", 
+				"mem_kb", stats.MemoryAlloc, 
+				"status", stats.Status)
+		} else {
+			slog.Info("Sistema Saudável", 
+				"mem_kb", stats.MemoryAlloc)
+		}
+
+		time.Sleep(10 * time.Second)
+	}
+
 }
