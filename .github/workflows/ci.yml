@@ -1,0 +1,34 @@
+name: CI/CD Pipeline
+
+# O que dispara a automação? (Push no código ou Pull Request)
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest # O GitHub vai abrir uma máquina Linux para você
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4 # Baixa seu código na máquina virtual
+
+      - name: Configurar o Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.21" # Versão que você está usando
+
+      - name: Instalar dependências
+        run: go mod download
+
+      - name: Rodar Testes
+        run: go test -v ./...
+
+      - name: Build do Binário
+        run: go build -v -o system-monitor .
+
+      # Diferencial DevOps: Build da Imagem Docker para testar se o Dockerfile está OK
+      - name: Build Docker Image
+        run: docker build -t system-monitor:latest .
