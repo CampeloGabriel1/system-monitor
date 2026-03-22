@@ -18,7 +18,7 @@ jobs:
       - name: Configurar o Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.21" # Versão que você está usando
+          go-version: "1.25.6" # Versão que você está usando
 
       - name: Instalar dependências
         run: go mod download
